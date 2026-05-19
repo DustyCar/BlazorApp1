@@ -1,6 +1,8 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JS
+@using Microsoft.JSInterop
 @attribute [Authorize]
 
 <PageTitle>Home</PageTitle>
@@ -8,8 +10,14 @@
 <div style="display: flex; flex-direction: column;">
     <textarea @bind="inputText" @bind:event="oninput"></textarea>
     <button type="button" @onclick="EncryptText">Encrypt</button>
-    <textarea @bind="outputText"></textarea>
-    <button type="button" @onclick="DecryptText">Encrypt</button>
+    <textarea readonly @bind="outputText"></textarea>
+    <button type="button" @onclick="DecryptText">Decrypt</button>
+</div>
+
+<div>
+    <button type="button" @onclick="SaveFile">SAVE</button>
+    <button type="button" @onclick="LoadFile">LOAD</button>
+    <button type="button">CLEAR</button>
 </div>
 
 
@@ -58,6 +66,16 @@
 
             inputText += encryptedLetter;
         }
+    }
+
+    private async Task SaveFile()
+    {
+        await JS.InvokeVoidAsync( "downloadFile", "encrypted.txt", outputText );
+    }
+
+    private void LoadFile()
+    {
+        
     }
 
 }
