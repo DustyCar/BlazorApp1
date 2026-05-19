@@ -1,12 +1,63 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
 <PageTitle>Home</PageTitle>
 
 <div style="display: flex; flex-direction: column;">
-	<textarea placeholder="input text to encrypt"></textarea>
-	<button>Encrypt</button>
-	<textarea placeholder="output decrypted text"></textarea>
-	<button>Decrypt</button>
+    <textarea @bind="inputText" @bind:event="oninput"></textarea>
+    <button type="button" @onclick="EncryptText">Encrypt</button>
+    <textarea @bind="outputText"></textarea>
+    <button type="button" @onclick="DecryptText">Encrypt</button>
 </div>
+
+
+
+@code {
+    private string inputText = "";
+    private string outputText = "";
+
+    private void EncryptText()
+    {
+        outputText = "";
+
+        foreach( char letter in inputText )
+        {
+            char encryptedLetter;
+
+            if( letter > 'w' )
+            {
+                encryptedLetter = (char)(letter - 23);
+            }
+            else
+            {
+                encryptedLetter = (char)(letter + 3);
+            }
+
+            outputText += encryptedLetter;
+        }
+    }
+
+    private void DecryptText()
+    {
+        inputText = "";
+
+        foreach( char letter in outputText )
+        {
+            char encryptedLetter;
+
+            if( letter < 'd' )
+            {
+                encryptedLetter = (char)(letter + 23);
+            }
+            else
+            {
+                encryptedLetter = (char)(letter - 3);
+            }
+
+            inputText += encryptedLetter;
+        }
+    }
+
+}
