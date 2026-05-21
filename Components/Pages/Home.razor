@@ -3,20 +3,27 @@
 @using Microsoft.AspNetCore.Authorization
 @inject IJSRuntime JS
 @using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Components.Forms
 @attribute [Authorize]
 
 <PageTitle>Home</PageTitle>
 
 <div style="display: flex; flex-direction: column;">
-    <textarea @bind="inputText" @bind:event="oninput"></textarea>
+    <textarea style="height: 25vh" @bind="inputText" @bind:event="oninput"></textarea>
+    <label for="method">Choose encryption:</label>
+    <select id="method" name="method">
+            <option value="caesar">Caeser Cipher</option>
+            <option value="vigenere">Vigenere Cipher</option>
+    </select>
     <button type="button" @onclick="EncryptText">Encrypt</button>
-    <textarea readonly @bind="outputText"></textarea>
+    <textarea readonly style="height: 25vh" @bind="outputText"></textarea>
     <button type="button" @onclick="DecryptText">Decrypt</button>
 </div>
 
 <div>
+    <input @bind="fileName" placeholder="Enter file name" />
     <button type="button" @onclick="SaveFile">SAVE</button>
-    <button type="button" @onclick="LoadFile">LOAD</button>
+    <InputFile OnChange="LoadFile" />
     <button type="button" @onclick="ClearText">CLEAR</button>
 </div>
 
@@ -25,6 +32,7 @@
 @code {
     private string inputText = "";
     private string outputText = "";
+    private string fileName = "encrypted.txt";
 
     private void EncryptText()
     {
@@ -34,17 +42,25 @@
         {
             char encryptedLetter;
 
-            if( letter > 'w' )
+            if( char.IsLetter( letter ) )
             {
-                encryptedLetter = (char)(letter - 23);
+                if( letter > 'w' )
+                {
+                    encryptedLetter = (char)(letter - 23);
+                }
+                else
+                {
+                    encryptedLetter = (char)(letter + 3);
+                }
             }
             else
             {
-                encryptedLetter = (char)(letter + 3);
+                encryptedLetter = letter;
             }
 
             outputText += encryptedLetter;
         }
+		inputText = "";
     }
 
     private void DecryptText()
@@ -54,28 +70,39 @@
         foreach( char letter in outputText )
         {
             char encryptedLetter;
-
-            if( letter < 'd' )
+            if( char.IsLetter( letter ) )
             {
-                encryptedLetter = (char)(letter + 23);
+                if( letter < 'd' )
+                {
+                    encryptedLetter = (char)(letter + 23);
+                }
+                else
+                {
+                    encryptedLetter = (char)(letter - 3);
+                }
             }
             else
             {
-                encryptedLetter = (char)(letter - 3);
+                encryptedLetter = letter;
             }
-
             inputText += encryptedLetter;
         }
+		outputText = "";
     }
 
     private async Task SaveFile()
     {
-        await JS.InvokeVoidAsync( "downloadFile", "encrypted.txt", outputText );
+        await JS.InvokeVoidAsync( "downloadFile", fileName, outputText );
     }
 
-    private void LoadFile()
+    private async Task LoadFile( InputFileChangeEventArgs e )
     {
-        
+        var file = e.File;
+
+        using var stream = file.OpenReadStream();
+        using var reader = new StreamReader( stream );
+
+        outputText = await reader.ReadToEndAsync();
     }
 
     private void ClearText()
