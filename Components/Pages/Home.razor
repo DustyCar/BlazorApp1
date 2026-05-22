@@ -1,5 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@using BlazorApp1.Services
 @using Microsoft.AspNetCore.Authorization
 @inject IJSRuntime JS
 @using Microsoft.JSInterop
@@ -33,61 +34,19 @@
     private string inputText = "";
     private string outputText = "";
     private string fileName = "encrypted.txt";
+    private encryptionService service = new encryptionService();
 
     private void EncryptText()
     {
-        outputText = "";
-
-        foreach( char letter in inputText )
-        {
-            char encryptedLetter;
-
-            if( char.IsLetter( letter ) )
-            {
-                if( letter > 'w' )
-                {
-                    encryptedLetter = (char)(letter - 23);
-                }
-                else
-                {
-                    encryptedLetter = (char)(letter + 3);
-                }
-            }
-            else
-            {
-                encryptedLetter = letter;
-            }
-
-            outputText += encryptedLetter;
-        }
-		inputText = "";
+        outputText = service.Encrypt( inputText );
+        inputText = "";
     }
 
     private void DecryptText()
     {
-        inputText = "";
+        inputText = service.Decrypt( outputText );
+        outputText = "";
 
-        foreach( char letter in outputText )
-        {
-            char encryptedLetter;
-            if( char.IsLetter( letter ) )
-            {
-                if( letter < 'd' )
-                {
-                    encryptedLetter = (char)(letter + 23);
-                }
-                else
-                {
-                    encryptedLetter = (char)(letter - 3);
-                }
-            }
-            else
-            {
-                encryptedLetter = letter;
-            }
-            inputText += encryptedLetter;
-        }
-		outputText = "";
     }
 
     private async Task SaveFile()
