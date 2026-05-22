@@ -16,6 +16,8 @@
             <option value="caesar">Caeser Cipher</option>
             <option value="vigenere">Vigenere Cipher</option>
     </select>
+    <label>Load normal file:</label>
+    <InputFile OnChange='@(e => LoadFile( e, false ))' />
     <button type="button" @onclick="EncryptText">Encrypt</button>
     <textarea readonly style="height: 25vh" @bind="outputText"></textarea>
     <button type="button" @onclick="DecryptText">Decrypt</button>
@@ -24,7 +26,8 @@
 <div>
     <input @bind="fileName" placeholder="Enter file name" />
     <button type="button" @onclick="SaveFile">SAVE</button>
-    <InputFile OnChange="LoadFile" />
+    <label>Load encrypted file:</label>
+    <InputFile OnChange='@(e => LoadFile( e, true ))' />
     <button type="button" @onclick="ClearText">CLEAR</button>
 </div>
 
@@ -54,14 +57,23 @@
         await JS.InvokeVoidAsync( "downloadFile", fileName, outputText );
     }
 
-    private async Task LoadFile( InputFileChangeEventArgs e )
+    private async Task LoadFile( InputFileChangeEventArgs e, bool encrypted )
     {
         var file = e.File;
 
         using var stream = file.OpenReadStream();
         using var reader = new StreamReader( stream );
 
-        outputText = await reader.ReadToEndAsync();
+        string text = await reader.ReadToEndAsync();
+
+        if( encrypted )
+        {
+            outputText = text;
+        }
+        else
+        {
+            inputText = text;
+        }
     }
 
     private void ClearText()
