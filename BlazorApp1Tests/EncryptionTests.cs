@@ -6,55 +6,63 @@ namespace EncryptionTests
     public class EncryptionServiceTests
     {
         [TestMethod]
-        public void Encrypt_Method_Returns_Correct_Result()
+        public void Caesar_Encrypt_Returns_Correct_Result()
         {
-            // Arrange
             encryptionService service = new encryptionService();
 
-            // Act
             string result = service.Encrypt( "abc" );
 
-            // Assert
             Assert.AreEqual( "def", result );
         }
 
         [TestMethod]
-        public void Decrypt_Method_Returns_Correct_Result()
+        public void Caesar_Decrypt_Returns_Correct_Result()
         {
-            // Arrange
             encryptionService service = new encryptionService();
 
-            // Act
             string result = service.Decrypt( "def" );
 
-            // Assert
             Assert.AreEqual( "abc", result );
         }
 
         [TestMethod]
-        public void Encrypt_WrapsAroundAlphabet()
+        public void Caesar_Encrypt_Wraps_Around_Alphabet()
         {
-            // Arrange
             encryptionService service = new encryptionService();
 
-            // Act
             string result = service.Encrypt( "xyz" );
 
-            // Assert
             Assert.AreEqual( "abc", result );
         }
 
         [TestMethod]
-        public void Decrypt_WrapsBackwards()
+        public void Caesar_Decrypt_Wraps_Backwards()
         {
-            // Arrange
             encryptionService service = new encryptionService();
 
-            // Act
             string result = service.Decrypt( "abc" );
 
-            // Assert
             Assert.AreEqual( "xyz", result );
+        }
+
+        [TestMethod]
+        public void Vigenere_Encrypt_Returns_Correct_Result()
+        {
+            encryptionService service = new encryptionService();
+
+            string result = service.VigenèreEncrypt( "hello" );
+
+            Assert.AreEqual( "ksroc", result );
+        }
+
+        [TestMethod]
+        public void Vigenere_Decrypt_Returns_Correct_Result()
+        {
+            encryptionService service = new encryptionService();
+
+            string result = service.VigenèreDecrypt( "ksroc" );
+
+            Assert.AreEqual( "hello", result );
         }
     }
 }

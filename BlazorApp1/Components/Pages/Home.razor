@@ -12,9 +12,9 @@
 <div style="display: flex; flex-direction: column;">
     <textarea style="height: 25vh" @bind="inputText" @bind:event="oninput"></textarea>
     <label for="method">Choose encryption:</label>
-    <select id="method" name="method">
-            <option value="caesar">Caeser Cipher</option>
-            <option value="vigenere">Vigenere Cipher</option>
+    <select id="method" name="method" @bind="selectedMethod">
+        <option value="caesar">Caesar Cipher</option>
+        <option value="vigenere">Vigenere Cipher</option>
     </select>
     <label>Load normal file:</label>
     <InputFile OnChange='@(e => LoadFile( e, false ))' />
@@ -37,19 +37,35 @@
     private string inputText = "";
     private string outputText = "";
     private string fileName = "encrypted.txt";
+    private string selectedMethod = "caesar";
     private encryptionService service = new encryptionService();
 
     private void EncryptText()
     {
-        outputText = service.Encrypt( inputText );
+        if( selectedMethod == "caesar" )
+        {
+            outputText = service.Encrypt( inputText );
+        }
+        else if( selectedMethod == "vigenere" )
+        {
+            outputText = service.VigenèreEncrypt( inputText );
+        }
+
         inputText = "";
     }
 
     private void DecryptText()
     {
-        inputText = service.Decrypt( outputText );
-        outputText = "";
+        if( selectedMethod == "caesar" )
+        {
+            inputText = service.Decrypt( outputText );
+        }
+        else if( selectedMethod == "vigenere" )
+        {
+            inputText = service.VigenèreDecrypt( outputText );
+        }
 
+        outputText = "";
     }
 
     private async Task SaveFile()

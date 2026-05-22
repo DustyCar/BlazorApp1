@@ -58,5 +58,74 @@
             return inputText;
         }
 
+
+        public string VigenèreEncrypt( string input )
+        {
+            string output = "";
+            string key = "DOG";
+
+            int keyIndex = 0;
+
+            foreach( char letter in input )
+            {
+                if( char.IsLetter( letter ) )
+                {
+                    int shift = char.ToUpper( key[ keyIndex ] ) - 'A';
+
+                    char encryptedLetter =
+                        (char)(((letter - 'a' + shift) % 26) + 'a');
+
+                    output += encryptedLetter;
+
+                    keyIndex++;
+
+                    if( keyIndex >= key.Length )
+                    {
+                        keyIndex = 0;
+                    }
+                }
+                else
+                {
+                    output += letter;
+                }
+            }
+
+            return output;
+        }
+
+        public string VigenèreDecrypt( string output )
+        {
+            string input = "";
+            string key = "DOG";
+
+            int keyIndex = 0;
+
+            foreach( char letter in output )
+            {
+                if( char.IsLetter( letter ) )
+                {
+                    int shift = char.ToUpper( key[ keyIndex ] ) - 'A';
+
+                    char decryptedLetter =
+                        (char)(((letter - 'a' - shift + 26) % 26) + 'a');
+
+                    input += decryptedLetter;
+
+                    keyIndex++;
+
+                    if( keyIndex >= key.Length )
+                    {
+                        keyIndex = 0;
+                    }
+                }
+                else
+                {
+                    input += letter;
+                }
+            }
+
+            return input;
+        }
+
     }
 }
